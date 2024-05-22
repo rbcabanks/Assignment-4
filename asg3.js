@@ -357,7 +357,12 @@ function renderScene(){
 
   //gl.uniform1i(u_whichTexture,0);
   //drawCubeUV(modelMatrix,uv);
+  var Sph= new Sphere;
+  let k= new Matrix4();
+  k.setTranslate(6,1,-3);
+  Sph.matrix.multiply(k);
 
+  Sph.render();
 
 
 
@@ -396,8 +401,6 @@ function renderScene(){
     //drawCube(floatingCubes[x]);
   }
 
-  var Sph= new Sphere;
-  //Sph.render();
 
   var duration = performance.now()-startTime;
   sendTextToHTML(("ms:" + Math.floor(duration)+" fps:"+ Math.floor(10000/duration)/10), "numdot")
@@ -432,16 +435,6 @@ function sendTextToHTML(text,htmlID){
   }
   htmlElm.innerHTML=text;
 }
-
-
-  /*
-  console.log(a,c)
-  var x=a-3;
-  var y=c+1.5;
-  console.log(x,y)
-  if(g_map[x][y]==2){
-    g_map[x][y]=0;
-  }*/
 
 
 function initTextures(gl, n) {

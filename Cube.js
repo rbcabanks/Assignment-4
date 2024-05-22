@@ -51,8 +51,8 @@ var face4  = new Float32Array([
 ]);
 
 var face5  = new Float32Array([
-  1.0,1.0,-1.0,
-  -1.0, 1.0, -1.0,
+  1.0,1.0,-1.0, // top left
+  -1.0, 1.0, -1.0, // top left
   -1.0,1.0, 1.0,
   1.0, 1.0, -1.0,
   1.0, 1.0,1.0,
@@ -60,8 +60,8 @@ var face5  = new Float32Array([
 ]);
 
 var face6  = new Float32Array([
-  1.0, -1.0, -1.0,
-  -1.0,-1.0,-1.0,
+  1.0, -1.0, -1.0, // top left
+  -1.0,-1.0,-1.0, // back
   -1.0, -1.0, 1.0,
   1.0, -1.0, -1.0,
   1.0, -1.0, 1.0,
@@ -98,7 +98,7 @@ var verticesCube = new Float32Array([   // Vertex coordinates
 1.0, 1.0,-1.0,
 
 1.0,-1.0,-1.0,
-1.0, 1.0, 1.0,
+1.0, -1.0, 1.0,
 1.0,-1.0, 1.0,
 1.0, 1.0, 1.0,
 1.0, 1.0,-1.0,
@@ -280,9 +280,7 @@ function setNormals(normalBuffer,normals){
   gl.enableVertexAttribArray(a_Normal);
 }
 function drawCubeUV(vertices,uv) {
-  //var face1  = new Float32Array([1.0,-1.0,1.0,1.0,-1.0,-1.0,1.0, 1.0,-1.0,]);
-    
-    //drawTriangle3DUV(face2,uv);
+ 
     var n = 3 // number of vertices
     // creating buffer object
     var vertexBuffer = gl.createBuffer();
