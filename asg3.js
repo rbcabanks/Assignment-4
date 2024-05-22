@@ -219,7 +219,7 @@ function connectVariablesToGLSL() {
 function updateAnimationAngles(){
   if(animate==true){
     //wings=10*Math.sin(g_seconds*2);
-    float=10*Math.sin(g_seconds/30);
+    float=40*Math.sin(g_seconds/10);
   }
 
 }
@@ -267,11 +267,11 @@ function drawMap(g_map){
         ]
         if(g_normalOn==true){
           gl.uniform1i(u_whichTexture,-4);
-          drawCube3DUVNormal(body,uv,[0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0]);
+          //drawCube3DUVNormal(body,uv,[0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0]);
         }
         else{
           gl.uniform1i(u_whichTexture,-1);
-          drawCubeUV(body,uv);
+          //drawCubeUV(body,uv);
         }
         //gl.uniform1i(u_whichTexture,-1);
         //drawCubeUV(body,uv);
@@ -344,7 +344,8 @@ function renderScene(){
   modelMatrix.multiply(scaleM);
   translateM.setTranslate(0,.1,0);
   modelMatrix.multiply(translateM);
-  /*if(g_normalOn==true){
+  
+  if(g_normalOn==true){
     gl.uniform1i(u_whichTexture,-4);
     drawCube3DUVNormal(modelMatrix,uv,[0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1]);
   }
@@ -353,9 +354,9 @@ function renderScene(){
     drawCubeUV(modelMatrix,uv);
 
   }
-  */
-  gl.uniform1i(u_whichTexture,0);
-  drawCubeUV(modelMatrix,uv);
+
+  //gl.uniform1i(u_whichTexture,0);
+  //drawCubeUV(modelMatrix,uv);
 
 
 
@@ -381,16 +382,18 @@ function renderScene(){
     
     rgba=[0,0,0,1];
     //rgba=[0,0,0,1];
-    /*
+    
     if(g_normalOn==true){
       gl.uniform1i(u_whichTexture,-4);
+      drawCube3DUVNormal(floatingCubes[x],uv,[0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0]);
     }
     else{
       gl.uniform1i(u_whichTexture,-2);
-    }*/
+      drawCube(floatingCubes[x]);
+    }
     //gl.uniform1i(u_whichTexture,-2);
-    gl.uniform1i(u_whichTexture,-2);
-    drawCube(floatingCubes[x]);
+    //gl.uniform1i(u_whichTexture,-2);
+    //drawCube(floatingCubes[x]);
   }
 
   var Sph= new Sphere;
