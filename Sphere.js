@@ -12,6 +12,11 @@ class Sphere{
         gl.uniform4f(u_FragColor,rgba[0],rgba[1],rgba[2],rgba[3]);
 
         gl.uniformMatrix4fv(u_ModelMatrix,false,this.matrix.elements);
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);}
+        else {
+            gl.uniform1i(u_whichTexture,-2);
+        }
 
         var d=Math.PI/10;
         var dd=Math.PI/10;
@@ -29,14 +34,15 @@ class Sphere{
                 v=v.concat(p2); uv=uv.concat([0,0]);
                 v=v.concat(p4); uv=uv.concat([0,0]);
 
-                gl.uniform4f(u_FragColor,1,1,1,1);
+                //gl.uniform4f(u_FragColor,1,1,1,1);
+                drawTriangle3DUVNormal(v,uv,v);
+
                 v=v.concat(p1); uv=uv.concat([0,0]);
                 v=v.concat(p4); uv=uv.concat([0,0]);
                 v=v.concat(p3); uv=uv.concat([0,0]);
-                gl.uniform4f(u_FragColor,1,1,1,1);
-                drawTriangle3DUVNormal(v,uv,v);
-               
 
+                //gl.uniform4f(u_FragColor,1,0,0,1);
+                drawTriangle3DUVNormal(v,uv,v);
             }
         }
     }

@@ -357,6 +357,7 @@ function renderScene(){
 
   //gl.uniform1i(u_whichTexture,0);
   //drawCubeUV(modelMatrix,uv);
+  
   var Sph= new Sphere;
   let k= new Matrix4();
   k.setTranslate(6,1,-3);
