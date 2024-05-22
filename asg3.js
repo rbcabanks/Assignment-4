@@ -271,8 +271,8 @@ function drawMap(g_map){
           gl.uniform1i(u_whichTexture,-1);
         }
         //gl.uniform1i(u_whichTexture,-1);
-        //drawCubeUV(body,uv);
-        drawCube3DUVNormal(body,uv,[0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1]);
+        drawCubeUV(body,uv);
+        //drawCube3DUVNormal(body,uv,[0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0]);
       }
 
       if(g_map[x][y]==2){

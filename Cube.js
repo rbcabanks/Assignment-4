@@ -429,7 +429,6 @@ function drawCube3DUVNormal (vertices,uv,normals){
       return -1;
     }
 
-    
     gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]*.9);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(face1),gl.DYNAMIC_DRAW);
     gl.vertexAttribPointer(a_Position,3,gl.FLOAT,false,0,0);
