@@ -335,15 +335,16 @@ function renderScene(){
   
   rgba=[0.0,0.5,0.5,1.0];
   gl.activeTexture(gl.TEXTURE1);
-  if(g_normalOn==true){
+  /*if(g_normalOn==true){
     gl.uniform1i(u_whichTexture,-4);
     drawCube3DUVNormal(modelMatrix1,uv,[0,0,-1,0,0,-1,0,0,-1]);
   }
   else{
     gl.uniform1i(u_whichTexture,-3);
     drawCubeUV(modelMatrix1,uv);
-  }
-
+  }*/
+  gl.uniform1i(u_whichTexture,-3);
+  drawCubeUV(modelMatrix1,uv);
 
 //sky
   scaleM=new Matrix4();
@@ -361,6 +362,7 @@ function renderScene(){
     drawCubeUV(modelMatrix,uv);
 
   }
+  
   //gl.uniform1i(u_whichTexture,0);
 
 
@@ -386,18 +388,20 @@ function renderScene(){
     
     rgba=[0,0,0,1];
     //rgba=[0,0,0,1];
+    /*
     if(g_normalOn==true){
       gl.uniform1i(u_whichTexture,-4);
     }
     else{
       gl.uniform1i(u_whichTexture,-2);
-    }
+    }*/
     //gl.uniform1i(u_whichTexture,-2);
+    gl.uniform1i(u_whichTexture,-2);
     drawCube(floatingCubes[x]);
   }
 
   var Sph= new Sphere;
-  Sph.render();
+  //Sph.render();
 
   var duration = performance.now()-startTime;
   sendTextToHTML(("ms:" + Math.floor(duration)+" fps:"+ Math.floor(10000/duration)/10), "numdot")
