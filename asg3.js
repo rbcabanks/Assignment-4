@@ -271,7 +271,8 @@ function drawMap(g_map){
           gl.uniform1i(u_whichTexture,-1);
         }
         //gl.uniform1i(u_whichTexture,-1);
-        drawCubeUV(body,uv);
+        //drawCubeUV(body,uv);
+        drawCube3DUVNormal(body,uv,[0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1]);
       }
 
       if(g_map[x][y]==2){
@@ -353,7 +354,7 @@ function renderScene(){
   modelMatrix.multiply(scaleM);
   translateM.setTranslate(0,.1,0);
   modelMatrix.multiply(translateM);
-  if(g_normalOn==true){
+  /*if(g_normalOn==true){
     gl.uniform1i(u_whichTexture,-4);
     drawCube3DUVNormal(modelMatrix,uv,[0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1]);
   }
@@ -362,8 +363,10 @@ function renderScene(){
     drawCubeUV(modelMatrix,uv);
 
   }
-  
-  //gl.uniform1i(u_whichTexture,0);
+  */
+  gl.uniform1i(u_whichTexture,0);
+  drawCubeUV(modelMatrix,uv);
+
 
 
 
