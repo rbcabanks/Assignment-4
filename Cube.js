@@ -400,6 +400,7 @@ function drawTriangle3D(vertices) {
 }
 
 function drawCube3DUVNormal (vertices,uv,normals){
+  //var rgba=this.color;
   var n = 3 // number of vertices
     // creating buffer object
     var vertexBuffer = gl.createBuffer();
@@ -428,11 +429,12 @@ function drawCube3DUVNormal (vertices,uv,normals){
       return -1;
     }
 
+    
+    gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]*.9);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(face1),gl.DYNAMIC_DRAW);
     gl.vertexAttribPointer(a_Position,3,gl.FLOAT,false,0,0);
     gl.enableVertexAttribArray(a_Position);
     gl.uniformMatrix4fv(u_ModelMatrix,false,vertices.elements);
-    gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]*.9);
     //uv
     gl.bindBuffer(gl.ARRAY_BUFFER,uvBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uv),gl.DYNAMIC_DRAW);
