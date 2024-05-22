@@ -459,7 +459,11 @@ function drawCube3DUVNormal (vertices,uv,normals){
     gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]*.9);
     gl.uniformMatrix4fv(u_ModelMatrix,false,vertices.elements);
     setUV(uvBuffer,uv);
-    setNormals(normalBuffer,normals);
+    setNormals(normalBuffer,[0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0]);
+    /*gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0]),gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(a_Normal,3,gl.FLOAT,false,0,0);
+    gl.enableVertexAttribArray(a_Normal)*/
     gl.drawArrays(gl.TRIANGLES,0, face2.length/3);
 
     g_vertexBuffer=null;
@@ -474,7 +478,11 @@ function drawCube3DUVNormal (vertices,uv,normals){
     gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]*.9);
     gl.uniformMatrix4fv(u_ModelMatrix,false,vertices.elements);
     setUV(uvBuffer,uv);
-    setNormals(normalBuffer,normals);
+    setNormals(normalBuffer,[1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0]);
+    /*gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0]),gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(a_Normal,3,gl.FLOAT,false,0,0);
+    gl.enableVertexAttribArray(a_Normal)*/
     gl.drawArrays(gl.TRIANGLES,0, face3.length/3);
 
     g_vertexBuffer=null;
@@ -488,7 +496,11 @@ function drawCube3DUVNormal (vertices,uv,normals){
     gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]*.9);
     gl.uniformMatrix4fv(u_ModelMatrix,false,vertices.elements);
     setUV(uvBuffer,uv);
-    setNormals(normalBuffer,normals);
+    setNormals(normalBuffer,[-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0]);
+    /*gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0]),gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(a_Normal,3,gl.FLOAT,false,0,0);
+    gl.enableVertexAttribArray(a_Normal)*/
     gl.drawArrays(gl.TRIANGLES,0, face4.length/3);
 
     g_vertexBuffer=null;
@@ -503,7 +515,11 @@ function drawCube3DUVNormal (vertices,uv,normals){
     gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]*.9);
     gl.uniformMatrix4fv(u_ModelMatrix,false,vertices.elements);
     setUV(uvBuffer,uv);
-    setNormals(normalBuffer,normals);
+    setNormals(normalBuffer,[0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1]);
+    /*gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1]),gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(a_Normal,3,gl.FLOAT,false,0,0);
+    gl.enableVertexAttribArray(a_Normal)*/
     gl.drawArrays(gl.TRIANGLES,0, face5.length/3);
 
     g_vertexBuffer=null;
@@ -518,6 +534,10 @@ function drawCube3DUVNormal (vertices,uv,normals){
     gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]*.9);
     gl.uniformMatrix4fv(u_ModelMatrix,false,vertices.elements);
     setUV(uvBuffer,uv);
-    setNormals(normalBuffer,normals);
+    setNormals(normalBuffer,[0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1]);
+    /*gl.bindBuffer(gl.ARRAY_BUFFER,normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1]),gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(a_Normal,3,gl.FLOAT,false,0,0);
+    gl.enableVertexAttribArray(a_Normal)*/
     gl.drawArrays(gl.TRIANGLES,0, face6.length/3);
   }
