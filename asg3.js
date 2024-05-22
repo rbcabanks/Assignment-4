@@ -4,6 +4,8 @@ var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec2 a_UV;\n' +
   'varying vec2 v_UV;\n' +
+  'varying vec3 v_Normal;\n'+
+  'attribute vec3 a_Normal;\n'+
   'uniform mat4 u_ModelMatrix;\n' +
   'uniform mat4 u_GlobalRotateMatrix;\n' +
   'uniform mat4 u_ViewMatrix;\n' +
@@ -13,12 +15,14 @@ var VSHADER_SOURCE =
   '  gl_Position = u_ProjectionMatrix*u_ViewMatrix*  u_GlobalRotateMatrix* u_ModelMatrix * a_Position;\n' +
   '  gl_PointSize = u_Size;\n' +
   '  v_UV = a_UV; \n'+
+  ' v_Normal=a_Normal; \n'+
   '}\n';
 
 // Fragment shader program
 var FSHADER_SOURCE = `
   precision mediump float;
   varying vec2 v_UV;
+  varying vec3 v_Normal;
   uniform vec4 u_FragColor; 
   uniform sampler2D u_Sampler0;
   uniform sampler2D u_Sampler1;
@@ -43,6 +47,9 @@ var FSHADER_SOURCE = `
         vec4 texColor=texture2D(u_Sampler1,v_UV);
         vec4 baseColor=vec4(0,0,.1,1);
         gl_FragColor = t*baseColor+t*texColor;
+      }
+      else if (u_whichTexture == -4){
+        gl_FragColor=vec4((v_Normal+1.0)/2.0,1.0);
       }
       else{
         gl_FragColor=vec4(1,.2,.2,1);
@@ -99,6 +106,7 @@ let animate=true;
 let u_texColorWeight;
 let a_UV;
 let u_PickedFace=0;
+let g_normalOn=false;
 
 let gAnimalGlobalRotation=90; // was 40
 let gAnimalGlobalRotationy=0;
@@ -107,8 +115,8 @@ function addActionsForUI() { // used this resource "https://www.w3schools.com/ho
  //document.getElementById('rLeg').addEventListener('mousemove', function () {g_rLeg=this.value; renderScene();}); //g_selectedColor[0]=this.value/100;
  //document.getElementById('lLeg').addEventListener('mousemove', function () {g_lLeg=this.value; renderScene();}); //g_selectedColor[0]=this.value/100;
  //document.getElementById('wings').addEventListener('mousemove', function () {wings=this.value; renderScene();}); //g_selectedColor[0]=this.value/100;
- //document.getElementById('on').onclick = function () {animate=true};
- //document.getElementById('off').onclick = function () {animate=false};
+ document.getElementById('on').onclick = function () {g_normalOn=true;};
+ document.getElementById('off').onclick = function () {g_normalOn=false};
  
  if(totalPoints!=10){
   sendTextToHTML(totalPoints, "points")}
@@ -152,6 +160,13 @@ function connectVariablesToGLSL() {
     console.log('Failed to get the storage location of a_UV');
     return;
   }
+
+  a_Normal = gl.getAttribLocation(gl.program, 'a_Normal');
+  if (a_Normal < 0) {
+    console.log('Failed to get the storage location of a_Normal');
+    return;
+  }
+
   // Get the storage location of u_FragColor
   u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
   if (!u_FragColor) {
@@ -249,7 +264,13 @@ function drawMap(g_map){
           0,0, 0,2, 2,.3,
           0,0, 2,1, 1,0,
         ]
-        gl.uniform1i(u_whichTexture,-1);
+        if(g_normalOn==true){
+          gl.uniform1i(u_whichTexture,-4);
+        }
+        else{
+          gl.uniform1i(u_whichTexture,-1);
+        }
+        //gl.uniform1i(u_whichTexture,-1);
         drawCubeUV(body,uv);
       }
 
@@ -313,10 +334,16 @@ function renderScene(){
   modelMatrix1.multiply(translateM);
   
   rgba=[0.0,0.5,0.5,1.0];
-  gl.uniform1i(u_whichTexture,-3);
   gl.activeTexture(gl.TEXTURE1);
-  drawCubeUV(modelMatrix1,uv);
-  //drawCube(modelMatrix1);
+  if(g_normalOn==true){
+    gl.uniform1i(u_whichTexture,-4);
+    drawCube3DUVNormal(modelMatrix1,uv,[0,0,-1,0,0,-1,0,0,-1]);
+  }
+  else{
+    gl.uniform1i(u_whichTexture,-3);
+    drawCubeUV(modelMatrix1,uv);
+  }
+
 
 //sky
   scaleM=new Matrix4();
@@ -325,8 +352,17 @@ function renderScene(){
   modelMatrix.multiply(scaleM);
   translateM.setTranslate(0,.1,0);
   modelMatrix.multiply(translateM);
-  gl.uniform1i(u_whichTexture,0);
-  drawCubeUV(modelMatrix,uv);
+  if(g_normalOn==true){
+    gl.uniform1i(u_whichTexture,-4);
+    drawCube3DUVNormal(modelMatrix,uv,[0,0,-1,0,0,-1,0,0,-1]);
+  }
+  else{
+    gl.uniform1i(u_whichTexture,0);
+    drawCubeUV(modelMatrix,uv);
+
+  }
+  //gl.uniform1i(u_whichTexture,0);
+
 
 
   drawMap(g_map);
@@ -350,10 +386,18 @@ function renderScene(){
     
     rgba=[0,0,0,1];
     //rgba=[0,0,0,1];
-    gl.uniform1i(u_whichTexture,-2);
+    if(g_normalOn==true){
+      gl.uniform1i(u_whichTexture,-4);
+    }
+    else{
+      gl.uniform1i(u_whichTexture,-2);
+    }
+    //gl.uniform1i(u_whichTexture,-2);
     drawCube(floatingCubes[x]);
   }
-  
+
+  var Sph= new Sphere;
+  Sph.render();
 
   var duration = performance.now()-startTime;
   sendTextToHTML(("ms:" + Math.floor(duration)+" fps:"+ Math.floor(10000/duration)/10), "numdot")
