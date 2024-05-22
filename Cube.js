@@ -399,7 +399,7 @@ function drawTriangle3D(vertices) {
   gl.drawArrays(gl.TRIANGLES,0,n);
 }
 
-function drawCube3DUVNormal (vertices,uv,normals){
+function drawCube3DUVNormal(vertices,uv,normals){
   //var rgba=this.color;
   var n = 3 // number of vertices
     // creating buffer object

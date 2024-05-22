@@ -107,6 +107,7 @@ let u_texColorWeight;
 let a_UV;
 let u_PickedFace=0;
 let g_normalOn=false;
+let a_Normal;
 
 let gAnimalGlobalRotation=90; // was 40
 let gAnimalGlobalRotationy=0;
@@ -115,7 +116,7 @@ function addActionsForUI() { // used this resource "https://www.w3schools.com/ho
  //document.getElementById('rLeg').addEventListener('mousemove', function () {g_rLeg=this.value; renderScene();}); //g_selectedColor[0]=this.value/100;
  //document.getElementById('lLeg').addEventListener('mousemove', function () {g_lLeg=this.value; renderScene();}); //g_selectedColor[0]=this.value/100;
  //document.getElementById('wings').addEventListener('mousemove', function () {wings=this.value; renderScene();}); //g_selectedColor[0]=this.value/100;
- document.getElementById('on').onclick = function () {g_normalOn=true;};
+ document.getElementById('on').onclick = function () {console.log(a_Normal);g_normalOn=true;};
  document.getElementById('off').onclick = function () {g_normalOn=false};
  
  if(totalPoints!=10){
@@ -266,13 +267,14 @@ function drawMap(g_map){
         ]
         if(g_normalOn==true){
           gl.uniform1i(u_whichTexture,-4);
+          drawCube3DUVNormal(body,uv,[0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0]);
         }
         else{
           gl.uniform1i(u_whichTexture,-1);
+          drawCubeUV(body,uv);
         }
         //gl.uniform1i(u_whichTexture,-1);
-        drawCubeUV(body,uv);
-        //drawCube3DUVNormal(body,uv,[0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0]);
+        //drawCubeUV(body,uv);
       }
 
       if(g_map[x][y]==2){
@@ -295,17 +297,8 @@ function drawMap(g_map){
         }
       }
     }
-/*
-    console.log(g_camera.at.elements[0]);
-    var cube=new Matrix4();
-    var cub32=new Matrix4();
-    rgba=[0.0,1,0.5,1.0];
-    gl.uniform1i(u_whichTexture,4);
-    cube.translate(g_camera.at.elements[2]+5,g_camera.at.elements[1],g_camera.at.elements[0]);
-    //cube.multiply(cub32);
-    drawCube(cube);*/
   }
-  //console.log(floatingCubes.length);
+
 }
 function renderScene(){
   gl.clear(gl.COLOR_BUFFER_BIT);
@@ -313,9 +306,6 @@ function renderScene(){
   updateAnimationAngles();
   renderAllShapes();
   
-
-  //gl.uniform1i(u_texColorWeight,0.8);
-
   let translateM= new Matrix4();
   let rotateM= new Matrix4();
   let scaleM= new Matrix4();
