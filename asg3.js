@@ -355,7 +355,7 @@ function renderScene(){
   modelMatrix.multiply(translateM);
   if(g_normalOn==true){
     gl.uniform1i(u_whichTexture,-4);
-    drawCube3DUVNormal(modelMatrix,uv,[0,0,-1,0,0,-1,0,0,-1]);
+    drawCube3DUVNormal(modelMatrix,uv,[0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1]);
   }
   else{
     gl.uniform1i(u_whichTexture,0);
