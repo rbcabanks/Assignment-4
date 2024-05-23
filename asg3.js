@@ -157,12 +157,12 @@ function addActionsForUI() { // used this resource "https://www.w3schools.com/ho
  document.getElementById('mX').addEventListener('mousemove', function () {moveXx=this.value; renderScene();}); 
  document.getElementById('mY').addEventListener('mousemove', function () {moveYy=this.value; renderScene();}); 
  document.getElementById('mZ').addEventListener('mousemove', function () {moveZz=this.value; renderScene();}); 
-
+/*
  if(totalPoints!=10){
   sendTextToHTML(totalPoints, "points")}
   else{
   sendTextToHTML("You Win!", "points")
-}
+*/
   
 }
 
@@ -613,37 +613,14 @@ function main() {
     }
   
      if (picked){
-      //console.log("eye",g_camera.eye.elements[0],g_camera.eye.elements[1],g_camera.eye.elements[2]-2)
-      //console.log("at",g_camera.at.elements[0],g_camera.at.elements[1],g_camera.at.elements[2])
-
+ 
       for(var x=0;x<floatingCubes.length;x++){
-        //console.log(floatingCubeCoords[x][1]-1,float/20,(floatingCubeCoords[x][0]*-1)-1);
-        /*console.log("ff",floatingCubeCoords[x][1]-1,g_camera.at.elements[0]);
-        console.log("fe",(floatingCubeCoords[x][0]*-1.)-1,g_camera.at.elements[2]);*/
-        //console.log("x",x,"floatingCubeCoords[x][1]-1",(floatingCubeCoords[x][1]-1),"floatingCubeCoords[x][0]*-1)-1",(floatingCubeCoords[x][0]*-1)-1);
-
-        //console.log("xy -1<x<1",(floatingCubeCoords[x][1]-1)-g_camera.at.elements[0]," -1.5<z<2 ",((floatingCubeCoords[x][0]*-1)-1)-g_camera.at.elements[2]);
         if(((((floatingCubeCoords[x][1]-1)-g_camera.at.elements[0])<=1) && (((floatingCubeCoords[x][1]-1)-g_camera.at.elements[0])>=-1.5)) && ((((floatingCubeCoords[x][0]*-1)-1)-g_camera.at.elements[2]>=-1.5) && (((floatingCubeCoords[x][0]*-1)-1)-g_camera.at.elements[2]<=2)))
           {
-            //console.log("xx",(floatingCubeCoords[x][1]-1)-g_camera.at.elements[0],((floatingCubeCoords[x][0]*-1)-1)-g_camera.at.elements[2]);
-
-            //console.log(floatingCubeCoords[x][1]-1)-g_camera.at.elements[0];
-            //console.log("fc",floatingCubeCoords[x][1],float/20,(floatingCubeCoords[x][0]));
-            //console.log("XY -1<x<1",(floatingCubeCoords[x][1]-1)-g_camera.at.elements[0]," -1.5<z<2 ",((floatingCubeCoords[x][0]*-1)-1)-g_camera.at.elements[2]);
-            //console.log("gmap delete",g_map[floatingCubeCoords[x][0]][floatingCubeCoords[x][1]], floatingCubeCoords[x][0], floatingCubeCoords[x][1]);
             if (g_map[floatingCubeCoords[x][0]][floatingCubeCoords[x][1]]!=0)
               g_map[floatingCubeCoords[x][0]][floatingCubeCoords[x][1]]=0;
-            //console.log("gmap after delete",g_map[floatingCubeCoords[x][0]][floatingCubeCoords[x][1]], floatingCubeCoords[x][0], floatingCubeCoords[x][1]);
-
-            //gl.clear(gl.COLOR_BUFFER_BIT);   // Clear <canvas>
+          
             renderScene();
-
-            if(totalPoints!=10){
-              totalPoints=totalPoints+1;
-              sendTextToHTML(totalPoints, "points")}
-              else{
-              sendTextToHTML("You Win!", "points")
-            }
 
           }
         }
