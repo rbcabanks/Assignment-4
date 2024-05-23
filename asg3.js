@@ -16,8 +16,8 @@ var VSHADER_SOURCE =
   '  gl_Position = u_ProjectionMatrix*u_ViewMatrix*  u_GlobalRotateMatrix* u_ModelMatrix * a_Position;\n' +
   '  gl_PointSize = u_Size;\n' +
   '  v_UV = a_UV; \n'+
-  ' v_Normal=a_Normal; \n'+
-  ' v_VertPos=u_ModelMatrix*a_Position;\n'+
+  '  v_Normal=a_Normal; \n'+
+  '  v_VertPos=u_ModelMatrix*a_Position;\n'+
   '}\n';
 
 // Fragment shader program
@@ -30,6 +30,7 @@ var FSHADER_SOURCE = `
   uniform sampler2D u_Sampler1;
   uniform int u_whichTexture;
   uniform vec3 u_lightPos;
+  uniform vec3 u_cameraPos;
   varying vec4 v_VertPos;
   uniform float u_texColorWeight;
   void main() {
@@ -59,14 +60,24 @@ var FSHADER_SOURCE = `
         gl_FragColor=vec4(1,1,1,1);
       }
       
-      vec3 lightVector= vec3(v_VertPos)-u_lightPos;
+      vec3 lightVector= u_lightPos-vec3(v_VertPos);
       float r =length(lightVector);
-      if(r<2.5){
-        gl_FragColor=vec4(1,0,0,1);
-      }
-      else if(r<4.0){
-        gl_FragColor=vec4(0,1,0,1);
-      }
+
+      vec3 L = normalize(lightVector);
+      vec3 N = normalize(v_Normal);
+      float nDot = max(dot(N,L),0.0);
+     
+      //reflection
+      vec3 R = reflect(-L,N);
+      
+      vec3 E= normalize(u_cameraPos-vec3(v_VertPos));
+
+      float specular= pow(max(dot(E,R),0.0),10.0);
+      vec3 diffuse = vec3(gl_FragColor)*nDot*.7;
+      vec3 ambient = vec3(gl_FragColor)*.3;
+      gl_FragColor=vec4(specular+diffuse+ambient,1.0);
+      
+
   }`; 
   
 // global variables
@@ -120,23 +131,23 @@ let a_UV;
 let u_PickedFace=0;
 let g_normalOn=false;
 let a_Normal;
-let moveXx=15;
-let moveYy=0;
-let moveZz=0;
 
+let moveXx=12;
+let moveYy=10;
+let moveZz=16;
+
+let LightON=true;
 let gAnimalGlobalRotation=90; // was 40
 let gAnimalGlobalRotationy=0;
-function addActionsForUI() { // used this resource "https://www.w3schools.com/howto/howto_js_rangeslider.asp"
- //document.getElementById('camera').addEventListener('mousemove', function () {gAnimalGlobalRotation=this.value; renderScene();}); //g_selectedColor[0]=this.value/100;
- //document.getElementById('rLeg').addEventListener('mousemove', function () {g_rLeg=this.value; renderScene();}); //g_selectedColor[0]=this.value/100;
- //document.getElementById('lLeg').addEventListener('mousemove', function () {g_lLeg=this.value; renderScene();}); //g_selectedColor[0]=this.value/100;
- //document.getElementById('wings').addEventListener('mousemove', function () {wings=this.value; renderScene();}); //g_selectedColor[0]=this.value/100;
- document.getElementById('on').onclick = function () {console.log(a_Normal);g_normalOn=true;};
- document.getElementById('off').onclick = function () {g_normalOn=false};
-document.getElementById('mX').addEventListener('mousemove', function () {moveXx=this.value; renderScene();}); 
-document.getElementById('mY').addEventListener('mousemove', function () {moveYy=this.value; renderScene();}); 
-document.getElementById('mZ').addEventListener('mousemove', function () {moveZz=this.value; renderScene();}); 
 
+function addActionsForUI() { // used this resource "https://www.w3schools.com/howto/howto_js_rangeslider.asp"
+ document.getElementById('on').onclick = function () {g_normalOn=true;};
+ document.getElementById('off').onclick = function () {g_normalOn=false};
+ document.getElementById('Lon').onclick = function () {LightON=true;};
+ document.getElementById('Loff').onclick = function () {LightON=false;};
+ document.getElementById('mX').addEventListener('mousemove', function () {moveXx=this.value; renderScene();}); 
+ document.getElementById('mY').addEventListener('mousemove', function () {moveYy=this.value; renderScene();}); 
+ document.getElementById('mZ').addEventListener('mousemove', function () {moveZz=this.value; renderScene();}); 
 
  if(totalPoints!=10){
   sendTextToHTML(totalPoints, "points")}
@@ -191,6 +202,12 @@ function connectVariablesToGLSL() {
     console.log('Failed to get the storage location of u_lightPos');
     return;
   }
+
+  u_cameraPos = gl.getUniformLocation(gl.program, 'u_cameraPos');
+  if (!u_cameraPos) {
+    console.log('Failed to get the storage location of u_cameraPos');
+    return;
+  }
   // Get the storage location of u_FragColor
   u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
   if (!u_FragColor) {
@@ -242,9 +259,10 @@ function connectVariablesToGLSL() {
 function updateAnimationAngles(){
   if(animate==true){
     //wings=10*Math.sin(g_seconds*2);
-    float=40*Math.sin(g_seconds/10);
+    //float=40*Math.sin(g_seconds/10);
   }
-
+  //moveXx=moveXx-Math.sin(g_seconds);
+  moveXx=moveXx-(Math.sin(g_seconds)/10);
 }
 var g_map=[
   [1,0,0,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -342,7 +360,7 @@ function renderScene(){
   ]
 
   let modelMatrix1=new Matrix4();
-  scaleM.setScale(32,.1,32);
+  scaleM.setScale(50,.1,50);
   modelMatrix1.multiply(scaleM);
   translateM.setTranslate(0,-20,0);
   modelMatrix1.multiply(translateM);
@@ -363,7 +381,7 @@ function renderScene(){
 //sky
   scaleM=new Matrix4();
   modelMatrix=new Matrix4();
-  scaleM.setScale(300,300,300);
+  scaleM.setScale(50,50,50);
   modelMatrix.multiply(scaleM);
   translateM.setTranslate(0,.1,0);
   modelMatrix.multiply(translateM);
@@ -380,19 +398,24 @@ function renderScene(){
 
   //gl.uniform1i(u_whichTexture,0);
   //drawCubeUV(modelMatrix,uv);
-  gl.uniform3f(u_lightPos,moveXx,moveYy,moveZz);
 
+  //light
+  gl.uniform3f(u_lightPos,moveXx,moveYy,moveZz);
   gl.uniform1i(u_whichTexture,1);
   var light=new Matrix4();
   var translateLight=new Matrix4();
+  var translateLight2=new Matrix4();
   var scaleLight=new Matrix4();
-  var initialTranslate=new Matrix4();
+  translateLight.setTranslate(moveXx,moveYy,moveZz);
+  //translateLight2.setTranslate(12,12,1);
 
-  translateLight.setTranslate(moveXx,moveYy+1,moveZz);
-  scaleLight.setScale(.1,.1,.1);
-  light.multiply(scaleLight);
+
+  scaleLight.setScale(1,1,1);
   light.multiply(translateLight);
-  //light.multiply()
+  light.multiply(scaleLight);
+  light.multiply(translateLight2);
+
+
   drawCube(light);
 
   var Sph= new Sphere;
@@ -567,27 +590,27 @@ function main() {
     }
   
      if (picked){
-      console.log("eye",g_camera.eye.elements[0],g_camera.eye.elements[1],g_camera.eye.elements[2]-2)
-      console.log("at",g_camera.at.elements[0],g_camera.at.elements[1],g_camera.at.elements[2])
+      //console.log("eye",g_camera.eye.elements[0],g_camera.eye.elements[1],g_camera.eye.elements[2]-2)
+      //console.log("at",g_camera.at.elements[0],g_camera.at.elements[1],g_camera.at.elements[2])
 
       for(var x=0;x<floatingCubes.length;x++){
         //console.log(floatingCubeCoords[x][1]-1,float/20,(floatingCubeCoords[x][0]*-1)-1);
         /*console.log("ff",floatingCubeCoords[x][1]-1,g_camera.at.elements[0]);
         console.log("fe",(floatingCubeCoords[x][0]*-1.)-1,g_camera.at.elements[2]);*/
-        console.log("x",x,"floatingCubeCoords[x][1]-1",(floatingCubeCoords[x][1]-1),"floatingCubeCoords[x][0]*-1)-1",(floatingCubeCoords[x][0]*-1)-1);
+        //console.log("x",x,"floatingCubeCoords[x][1]-1",(floatingCubeCoords[x][1]-1),"floatingCubeCoords[x][0]*-1)-1",(floatingCubeCoords[x][0]*-1)-1);
 
-        console.log("xy -1<x<1",(floatingCubeCoords[x][1]-1)-g_camera.at.elements[0]," -1.5<z<2 ",((floatingCubeCoords[x][0]*-1)-1)-g_camera.at.elements[2]);
+        //console.log("xy -1<x<1",(floatingCubeCoords[x][1]-1)-g_camera.at.elements[0]," -1.5<z<2 ",((floatingCubeCoords[x][0]*-1)-1)-g_camera.at.elements[2]);
         if(((((floatingCubeCoords[x][1]-1)-g_camera.at.elements[0])<=1) && (((floatingCubeCoords[x][1]-1)-g_camera.at.elements[0])>=-1.5)) && ((((floatingCubeCoords[x][0]*-1)-1)-g_camera.at.elements[2]>=-1.5) && (((floatingCubeCoords[x][0]*-1)-1)-g_camera.at.elements[2]<=2)))
           {
             //console.log("xx",(floatingCubeCoords[x][1]-1)-g_camera.at.elements[0],((floatingCubeCoords[x][0]*-1)-1)-g_camera.at.elements[2]);
 
             //console.log(floatingCubeCoords[x][1]-1)-g_camera.at.elements[0];
             //console.log("fc",floatingCubeCoords[x][1],float/20,(floatingCubeCoords[x][0]));
-            console.log("XY -1<x<1",(floatingCubeCoords[x][1]-1)-g_camera.at.elements[0]," -1.5<z<2 ",((floatingCubeCoords[x][0]*-1)-1)-g_camera.at.elements[2]);
-            console.log("gmap delete",g_map[floatingCubeCoords[x][0]][floatingCubeCoords[x][1]], floatingCubeCoords[x][0], floatingCubeCoords[x][1]);
+            //console.log("XY -1<x<1",(floatingCubeCoords[x][1]-1)-g_camera.at.elements[0]," -1.5<z<2 ",((floatingCubeCoords[x][0]*-1)-1)-g_camera.at.elements[2]);
+            //console.log("gmap delete",g_map[floatingCubeCoords[x][0]][floatingCubeCoords[x][1]], floatingCubeCoords[x][0], floatingCubeCoords[x][1]);
             if (g_map[floatingCubeCoords[x][0]][floatingCubeCoords[x][1]]!=0)
               g_map[floatingCubeCoords[x][0]][floatingCubeCoords[x][1]]=0;
-            console.log("gmap after delete",g_map[floatingCubeCoords[x][0]][floatingCubeCoords[x][1]], floatingCubeCoords[x][0], floatingCubeCoords[x][1]);
+            //console.log("gmap after delete",g_map[floatingCubeCoords[x][0]][floatingCubeCoords[x][1]], floatingCubeCoords[x][0], floatingCubeCoords[x][1]);
 
             //gl.clear(gl.COLOR_BUFFER_BIT);   // Clear <canvas>
             renderScene();
@@ -648,8 +671,8 @@ function keydown(ev) {
     g_camera.panRight();
   }
 
-  console.log("my eye",g_camera.eye.elements);
-  console.log("my at",g_camera.at.elements);
+  //console.log("my eye",g_camera.eye.elements);
+  //console.log("my at",g_camera.at.elements);
   renderScene();
 }
 var g_MvpMatrix = new Matrix4(); // Model view projection matrix
@@ -685,12 +708,12 @@ function initEventHandlers(ev) {
 
 }
 
-const sleepNow = (delay) => new Promise ((resolve) => setTimeout(resolve,delay));
+//const sleepNow = (delay) => new Promise ((resolve) => setTimeout(resolve,delay));
 
 function tick(){
-  g_seconds=performance.now()/200-g_startTime;
+  g_seconds=performance.now()/300-g_startTime;
   updateAnimationAngles();
   renderScene();
-  sleepNow (1000);
+  //sleepNow (1000);
   requestAnimationFrame(tick);
 }

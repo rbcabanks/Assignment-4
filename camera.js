@@ -1,7 +1,7 @@
 class Camera {
   constructor(aspectRatio,near,far) {
     this.fov =70.0;
-    this.eye=new Vector3([0.0,0.0,1.0]);
+    this.eye=new Vector3([-6,0.0,-1.0]);
     this.at=new Vector3([0.0,0.0,-1.0]);
     this.up=new Vector3([0.0,1.0,0.0]);
     this.speed = 1;

@@ -13,12 +13,12 @@ class Sphere{
         //console.log ("moveYy",moveYy);
         //console.log("moveZz",moveZz);
       
-        //r.setRotate(0,1,0,0);
-        r.setRotate(90,0,.02,.01);
-        
+        //r.setRotate(0,1,0,0)
         //r.setRotate(0,0,0,1);
-      
-        k.setTranslate(6,1,-3);
+
+        k.setTranslate(4,1,5);
+        //r.setRotate(0,0,.4,0);
+        r.setRotate(60,.5,0,.1);
         this.matrix.multiply(k);
         this.matrix.multiply(r);
 
