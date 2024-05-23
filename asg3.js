@@ -401,7 +401,8 @@ function renderScene(){
 
   //light
   gl.uniform3f(u_lightPos,moveXx,moveYy,moveZz);
-  gl.uniform1i(u_whichTexture,1);
+  //gl.uniform1i(u_whichTexture,1);
+  rgba=[2,2,0,1];
   var light=new Matrix4();
   var translateLight=new Matrix4();
   var translateLight2=new Matrix4();
@@ -410,10 +411,11 @@ function renderScene(){
   //translateLight2.setTranslate(12,12,1);
 
 
-  scaleLight.setScale(1,1,1);
+  scaleLight.setScale(-.1,-.1,-.1);
   light.multiply(translateLight);
-  light.multiply(scaleLight);
-  light.multiply(translateLight2);
+  //light.multiply(scaleLight);
+  light.scale(-.1,-.1,-.1);
+  //light.multiply(translateLight2);
 
 
   drawCube(light);
