@@ -8,6 +8,7 @@ var VSHADER_SOURCE =
   'attribute vec3 a_Normal;\n'+
   'varying vec4 v_VertPos;\n'+
   'uniform mat4 u_ModelMatrix;\n' +
+  'uniform mat4 u_NormalMatrix;\n' +
   'uniform mat4 u_GlobalRotateMatrix;\n' +
   'uniform mat4 u_ViewMatrix;\n' +
   'uniform mat4 u_ProjectionMatrix;\n' +
@@ -16,6 +17,7 @@ var VSHADER_SOURCE =
   '  gl_Position = u_ProjectionMatrix*u_ViewMatrix*  u_GlobalRotateMatrix* u_ModelMatrix * a_Position;\n' +
   '  gl_PointSize = u_Size;\n' +
   '  v_UV = a_UV; \n'+
+  //'  v_Normal=normalize(vec3(u_NormalMatrix*vec4(a_Normal,1))); \n'+
   '  v_Normal=a_Normal; \n'+
   '  v_VertPos=u_ModelMatrix*a_Position;\n'+
   '}\n';
@@ -32,6 +34,7 @@ var FSHADER_SOURCE = `
   uniform vec3 u_lightPos;
   uniform vec3 u_cameraPos;
   varying vec4 v_VertPos;
+  uniform bool u_lightOn;
   uniform float u_texColorWeight;
   void main() {
     
@@ -72,12 +75,18 @@ var FSHADER_SOURCE = `
       
       vec3 E= normalize(u_cameraPos-vec3(v_VertPos));
 
-      float specular= pow(max(dot(E,R),0.0),10.0);
-      vec3 diffuse = vec3(gl_FragColor)*nDot*.7;
-      vec3 ambient = vec3(gl_FragColor)*.3;
-      gl_FragColor=vec4(specular+diffuse+ambient,1.0);
-      
+      float specular= pow(max(dot(E,R),0.0),3.0)*.10; // shininess is the .4 
+      vec3 diffuse = vec3(gl_FragColor)*nDot*.93;
+      vec3 ambient = vec3(gl_FragColor)*.4;
 
+      if(u_lightOn){
+        if(u_whichTexture==0){
+          gl_FragColor=vec4(specular+diffuse+ambient,1);
+        }
+        else{
+          gl_FragColor=vec4(diffuse+ambient,1.0);
+        }
+      }
   }`; 
   
 // global variables
@@ -133,8 +142,8 @@ let g_normalOn=false;
 let a_Normal;
 
 let moveXx=12;
-let moveYy=10;
-let moveZz=16;
+let moveYy=2;
+let moveZz=0;
 
 let LightON=true;
 let gAnimalGlobalRotation=90; // was 40
@@ -202,7 +211,11 @@ function connectVariablesToGLSL() {
     console.log('Failed to get the storage location of u_lightPos');
     return;
   }
-
+  u_lightOn = gl.getUniformLocation(gl.program, 'u_lightOn');
+  if (!u_lightOn) {
+    console.log('Failed to get the storage location of u_lightOn');
+    return;
+  }
   u_cameraPos = gl.getUniformLocation(gl.program, 'u_cameraPos');
   if (!u_cameraPos) {
     console.log('Failed to get the storage location of u_cameraPos');
@@ -235,6 +248,11 @@ function connectVariablesToGLSL() {
     console.log('Failed to get the storage location of u_ModelMatrix');
     return;
   }
+  /*u_NormalMatrix = gl.getUniformLocation(gl.program, 'u_NormalMatrix');
+  if (!u_NormalMatrix) {
+    console.log('Failed to get the storage location of u_NormalMatrix');
+    return;
+  }*/
   u_GlobalRotateMatrix = gl.getUniformLocation(gl.program, 'u_GlobalRotateMatrix');
   if (!u_GlobalRotateMatrix) {
     console.log('Failed to get the storage location of u_GlobalRotateMatrix');
@@ -262,7 +280,8 @@ function updateAnimationAngles(){
     //float=40*Math.sin(g_seconds/10);
   }
   //moveXx=moveXx-Math.sin(g_seconds);
-  moveXx=moveXx-(Math.sin(g_seconds)/10);
+  //moveXx=moveXx-(Math.sin(g_seconds)/10);
+  moveXx=3*Math.cos(g_seconds);
 }
 var g_map=[
   [1,0,0,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -401,7 +420,9 @@ function renderScene(){
 
   //light
   gl.uniform3f(u_lightPos,moveXx,moveYy,moveZz);
-  //gl.uniform1i(u_whichTexture,1);
+  gl.uniform3f(u_cameraPos,g_camera.x,g_camera.y,g_camera.z);
+  gl.uniform1i(u_lightOn,LightON);
+  gl.uniform1i(u_whichTexture,-2);
   rgba=[2,2,0,1];
   var light=new Matrix4();
   var translateLight=new Matrix4();
@@ -411,10 +432,10 @@ function renderScene(){
   //translateLight2.setTranslate(12,12,1);
 
 
-  scaleLight.setScale(-.1,-.1,-.1);
+  //scaleLight.setScale(-4,-4,-4);
   light.multiply(translateLight);
   //light.multiply(scaleLight);
-  light.scale(-.1,-.1,-.1);
+  light.scale(.1,.1,.1);
   //light.multiply(translateLight2);
 
 

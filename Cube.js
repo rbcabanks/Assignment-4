@@ -3,6 +3,7 @@ class Cube {
       this.type = 'cube';
       this.color = [1.0, 1.0, 1.0, 1.0];
       this.matrix= new Matrix4();
+      this.normalMatrix=new Matrix4();
       this.clicked=false();    
     }
     // rendering function... originally was in colorpoints render function
@@ -528,4 +529,6 @@ function drawCube3DUVNormal(vertices,uv,normals){
     setNormals(normalBuffer,[0,-1,-1,0,-1,-1,0,-1,-1,0,-1,-1,0,-1,-1,0,-1,-1]);
 
     gl.drawArrays(gl.TRIANGLES,0, face6.length/3);
+
+    
   }
