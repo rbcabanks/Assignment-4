@@ -76,16 +76,17 @@ var FSHADER_SOURCE = `
       vec3 E= normalize(u_cameraPos-vec3(v_VertPos));
 
       float specular= pow(max(dot(E,R),0.0),3.0)*.10; // shininess is the .4 
-      vec3 diffuse = vec3(gl_FragColor)*nDot*.93;
-      vec3 ambient = vec3(gl_FragColor)*.4;
+      vec3 diffuse = vec3(gl_FragColor)*nDot*.73;
+      vec3 ambient = vec3(gl_FragColor)*.2;
 
       if(u_lightOn){
         if(u_whichTexture==0){
-          gl_FragColor=vec4(specular+diffuse+ambient,1);
+          gl_FragColor=vec4(specular+diffuse+ambient,1.0);
         }
         else{
           gl_FragColor=vec4(diffuse+ambient,1.0);
         }
+        //gl_FragColor=vec4(specular+diffuse+ambient,1.0);
       }
   }`; 
   
@@ -386,18 +387,15 @@ function renderScene(){
   
   rgba=[0.0,0.5,0.5,1.0];
   gl.activeTexture(gl.TEXTURE1);
-  /*if(g_normalOn==true){
-    gl.uniform1i(u_whichTexture,-4);
-    drawCube3DUVNormal(modelMatrix1,uv,[0,0,-1,0,0,-1,0,0,-1]);
-  }
-  else{
-    gl.uniform1i(u_whichTexture,-3);
-    drawCubeUV(modelMatrix1,uv);
-  }*/
+
+  
   gl.uniform1i(u_whichTexture,-3);
   drawCubeUV(modelMatrix1,uv);
+  
+  /*gl.uniform1i(u_whichTexture,-3);
+  drawCubeUV(modelMatrix1,uv);*/
 
-//sky
+//skybox
   scaleM=new Matrix4();
   modelMatrix=new Matrix4();
   scaleM.setScale(50,50,50);
@@ -405,14 +403,20 @@ function renderScene(){
   translateM.setTranslate(0,.1,0);
   modelMatrix.multiply(translateM);
   
+  let normalsback=[0.0,0.0,-1.0, 0.0,0.0,-1.0, 0.0,0.0,-1.0, 0.0,0.0,-1.0, 0.0,0.0,-1.0, 0.0,0.0,-1.0];
+  let normalsup=[0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   ];
+  let normalsright=[1.0, 0.0, 0.0,   1.0, 0.0, 0.0,1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0];
+  let normalsleft=[-1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,-1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0];  
+  let normalsface=[0.0, 0.0, 1.0,   0.0, 0.0, 1.0, 0.0, 0.0, 1.0,   0.0, 0.0, 1.0,  0.0, 0.0, 1.0,   0.0, 0.0, 1.0];
+  let normalsdown=[0.0,-1.0, 0.0, 0.0,-1.0, 0.0,  0.0,-1.0, 0.0, 0.0,-1.0, 0.0, 0.0,-1.0, 0.0, 0.0,-1.0, 0.0];
+  
   if(g_normalOn==true){
     gl.uniform1i(u_whichTexture,-4);
-    drawCube3DUVNormal(modelMatrix,uv,[0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1]);
-  }
+    drawCube3DUVNormal(modelMatrix,uv,normalsup,normalsback,normalsleft,normalsright,normalsface,normalsdown);
+  }//face = left
   else{
     gl.uniform1i(u_whichTexture,0);
     drawCubeUV(modelMatrix,uv);
-
   }
 
   //gl.uniform1i(u_whichTexture,0);
@@ -429,15 +433,8 @@ function renderScene(){
   var translateLight2=new Matrix4();
   var scaleLight=new Matrix4();
   translateLight.setTranslate(moveXx,moveYy,moveZz);
-  //translateLight2.setTranslate(12,12,1);
-
-
-  //scaleLight.setScale(-4,-4,-4);
   light.multiply(translateLight);
-  //light.multiply(scaleLight);
   light.scale(.1,.1,.1);
-  //light.multiply(translateLight2);
-
 
   drawCube(light);
 
@@ -445,13 +442,13 @@ function renderScene(){
   Sph.render();
 
   drawMap(g_map);
-
   for(let x=0;x<floatingCubes.length;x++){
 
             //x= 0-15
             //y= 0-15
             //each floating cube is at (x+3, (float/20) , y-1.5) location;
 
+            
     translateM=new Matrix4();
     translateM.setTranslate(0,(float/20),0)
     floatingCubes[x].multiply(translateM);
@@ -468,15 +465,17 @@ function renderScene(){
     
     if(g_normalOn==true){
       gl.uniform1i(u_whichTexture,-4);
-      drawCube3DUVNormal(floatingCubes[x],uv,[0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0]);
+      drawCube3DUVNormal(floatingCubes[x],uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
     }
     else{
+      gl.uniform3f(u_lightPos,moveXx,moveYy,moveZz);
+      gl.uniform3f(u_cameraPos,g_camera.x,g_camera.y,g_camera.z);
+      gl.uniform1i(u_lightOn,LightON);
       gl.uniform1i(u_whichTexture,-2);
+      rgba=[1,2,2,1];
       drawCube(floatingCubes[x]);
+      //drawCube3DUVNormal(floatingCubes[x],uv,[0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0]);
     }
-    //gl.uniform1i(u_whichTexture,-2);
-    //gl.uniform1i(u_whichTexture,-2);
-    //drawCube(floatingCubes[x]);
   }
 
 
