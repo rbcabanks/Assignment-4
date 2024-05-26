@@ -31,6 +31,7 @@ var FSHADER_SOURCE = `
   uniform sampler2D u_Sampler0;
   uniform sampler2D u_Sampler1;
   uniform int u_whichTexture;
+  uniform vec3 u_color;
   uniform vec3 u_lightPos;
   uniform vec3 u_cameraPos;
   varying vec4 v_VertPos;
@@ -40,6 +41,7 @@ var FSHADER_SOURCE = `
     
       if(u_whichTexture == -2){
         gl_FragColor = u_FragColor;
+        //gl_FragColor = vec4(1.0,0.0,0.0,1.0);
       }
       else if(u_whichTexture == -1){
         gl_FragColor=vec4(v_UV,1,1);
@@ -72,12 +74,17 @@ var FSHADER_SOURCE = `
      
       //reflection
       vec3 R = reflect(-L,N);
-      
       vec3 E= normalize(u_cameraPos-vec3(v_VertPos));
 
-      float specular= pow(max(dot(E,R),0.0),3.0)*.10; // shininess is the .4 
-      vec3 diffuse = vec3(gl_FragColor)*nDot*.73;
-      vec3 ambient = vec3(gl_FragColor)*.2;
+      //specular
+      float specular= pow(max(dot(E,R),.7),.1)*.10; // shininess is the .4 
+
+      //diffuse
+      vec3 diffuse = vec3(gl_FragColor)*nDot*.73*u_color;
+      //vec3 diffuse = u_color*nDot*.3;
+
+      //ambient
+      vec3 ambient = vec3(gl_FragColor)*.5;
 
       if(u_lightOn){
         if(u_whichTexture==0){
@@ -146,6 +153,10 @@ let moveXx=12;
 let moveYy=2;
 let moveZz=0;
 
+let colorChangeR=1;
+let colorChangeB=1;
+let colorChangeG=1;
+
 let LightON=true;
 let gAnimalGlobalRotation=90; // was 40
 let gAnimalGlobalRotationy=0;
@@ -158,7 +169,12 @@ function addActionsForUI() { // used this resource "https://www.w3schools.com/ho
  document.getElementById('mX').addEventListener('mousemove', function () {moveXx=this.value; renderScene();}); 
  document.getElementById('mY').addEventListener('mousemove', function () {moveYy=this.value; renderScene();}); 
  document.getElementById('mZ').addEventListener('mousemove', function () {moveZz=this.value; renderScene();}); 
-/*
+
+ document.getElementById('colorLightR').addEventListener('mousemove', function () {colorChangeR=this.value/10; renderScene();}); 
+ document.getElementById('colorLightB').addEventListener('mousemove', function () {colorChangeB=this.value/10; renderScene();}); 
+ document.getElementById('colorLightG').addEventListener('mousemove', function () {colorChangeG=this.value/10; renderScene();}); 
+
+ /*
  if(totalPoints!=10){
   sendTextToHTML(totalPoints, "points")}
   else{
@@ -242,6 +258,11 @@ function connectVariablesToGLSL() {
   u_Size = gl.getUniformLocation(gl.program, 'u_Size');
   if (!u_Size) {
     console.log('Failed to get the storage location of u_Size');
+    return;
+  }
+  u_color = gl.getUniformLocation(gl.program, 'u_color');
+  if (!u_color) {
+    console.log('Failed to get the storage location of u_color');
     return;
   }
   u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
@@ -426,7 +447,12 @@ function renderScene(){
   gl.uniform3f(u_lightPos,moveXx,moveYy,moveZz);
   gl.uniform3f(u_cameraPos,g_camera.x,g_camera.y,g_camera.z);
   gl.uniform1i(u_lightOn,LightON);
-  gl.uniform1i(u_whichTexture,-2);
+ // gl.uniform1i(u_whichTexture,-2);
+  //gl.uniform4f(u_FragColor,1.0,0,0,1.0);
+
+  //gl.uniform3f(u_color,1,0,0);
+  gl.uniform3f(u_color,colorChangeR,colorChangeG,colorChangeB);
+
   rgba=[2,2,0,1];
   var light=new Matrix4();
   var translateLight=new Matrix4();
@@ -438,6 +464,8 @@ function renderScene(){
 
   drawCube(light);
 
+
+  //sphere
   var Sph= new Sphere;
   Sph.render();
 
