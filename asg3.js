@@ -457,8 +457,10 @@ function renderScene(){
   drawCubeUV(modelMatrix1,uv);*/
 
   let Jerry= new Flamingo();
-  //Jerry.setTranslate();
-  //Jerry.render();
+  Jerry.x=-1;
+  Jerry.z=5;
+  Jerry.render();
+  
 //skybox
   scaleM=new Matrix4();
   modelMatrix=new Matrix4();
