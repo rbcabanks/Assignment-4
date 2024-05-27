@@ -63,7 +63,7 @@ class Flamingo {
         rgba=[.01,.01,.01,1];
         //eyes (2)
 
-        drawCube(modelMatrix);
+        //drawCube(modelMatrix);
 
 
         //beak (3)
@@ -204,6 +204,7 @@ class Flamingo {
         rgba=[.6,.3,.6,1];
         drawCube(modelMatrix);
 
+        
         //right joint (12)
         var rLegMatrix=new Matrix4();
         rLegMatrix.set(modelMatrix);
@@ -214,7 +215,7 @@ class Flamingo {
         rLegMatrix.rotate(g_rLeg/1.5,.5,0,0);
         rgba=[.8,.1,.6,1];
         rLegMatrix.multiply(moveMatrix);
-        drawCube(rLegMatrix);
+        //drawCube(rLegMatrix);
 
 
         //right bottom part of leg (13)
@@ -253,7 +254,7 @@ class Flamingo {
         footr.scale(1,.1,3.1);
         rgba=[.6,.3,.6,1];
         footr.multiply(moveMatrix);
-        drawCube(footr);
+        //drawCube(footr);
 
         //-------------------------------------------------------------------
         translateM.setIdentity();
@@ -282,7 +283,7 @@ class Flamingo {
         lLegMatrix.rotate(g_lLeg/1.5,.5,0,0);
         rgba=[.8,.1,.6,1];
         lLegMatrix.multiply(moveMatrix);
-        drawCube(lLegMatrix);
+        //drawCube(lLegMatrix);
 
         //left bottom part of leg (16)
         if(g_lLeg>3){
@@ -318,6 +319,6 @@ class Flamingo {
         footl.scale(1,.1,3.1);
         rgba=[.6,.3,.6,1];
         footl.multiply(moveMatrix);
-        drawCube(footl);
+        //drawCube(footl);
     }
 }

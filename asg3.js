@@ -456,6 +456,9 @@ function renderScene(){
   /*gl.uniform1i(u_whichTexture,-3);
   drawCubeUV(modelMatrix1,uv);*/
 
+  let Jerry= new Flamingo();
+  //Jerry.setTranslate();
+  Jerry.render();
 //skybox
   scaleM=new Matrix4();
   modelMatrix=new Matrix4();
