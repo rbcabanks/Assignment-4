@@ -51,7 +51,7 @@ class Flamingo {
 
         drawCube(modelMatrix);
 
-        translateM.setTranslate(-4,1.3,-2);
+        translateM.setTranslate(1,.3,-5.5);
         //rotateM.setRotate(5,-.1,0,0);
         scaleM.setScale(1.1,.2,.2);
         modelMatrix.multiply(translateM);
@@ -63,7 +63,7 @@ class Flamingo {
         rgba=[.01,.01,.01,1];
         //eyes (2)
 
-        //drawCube(modelMatrix);
+        drawCube(modelMatrix);
 
 
         //beak (3)
