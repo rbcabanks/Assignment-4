@@ -458,7 +458,7 @@ function renderScene(){
 
   let Jerry= new Flamingo();
   //Jerry.setTranslate();
-  Jerry.render();
+  //Jerry.render();
 //skybox
   scaleM=new Matrix4();
   modelMatrix=new Matrix4();
