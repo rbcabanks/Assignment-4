@@ -34,9 +34,6 @@ class Flamingo {
         translateM=new Matrix4();
         scaleM= new Matrix4();
 */        
-
-        gl.uniform1i(u_whichTexture,-2);
-
         translateM.setTranslate(0,.5,0);
         rotateM.setRotate(5,-.1,0,0);
         scaleM.setScale(.13,.1,.15);
@@ -49,7 +46,14 @@ class Flamingo {
         rgba=[1,.1,.7,1];
         //head (1)
 
-        drawCube(modelMatrix);
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
 
         translateM.setTranslate(1,.3,-5.5);
         //rotateM.setRotate(5,-.1,0,0);
@@ -63,7 +67,16 @@ class Flamingo {
         rgba=[.01,.01,.01,1];
         //eyes (2)
 
-        drawCube(modelMatrix);
+        //drawCube(modelMatrix);
+
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
 
 
         //beak (3)
@@ -78,7 +91,17 @@ class Flamingo {
         modelMatrix.multiply(this.rotX);
         modelMatrix.multiply(scaleM);
         rgba=[.7,.7,.7,1];
-        drawCube(modelMatrix);
+
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
+
+        //drawCube(modelMatrix);
 
         //beak (white front) (4)
         translateM.setTranslate(0,.50,-.27);
@@ -90,8 +113,14 @@ class Flamingo {
         modelMatrix.multiply(rotateM);
         modelMatrix.multiply(scaleM);
         rgba=[.7,.7,.7,1];
-        drawCube(modelMatrix);
-
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
         //beak (black) (5)
         translateM.setTranslate(0,.42,-.3);
         rotateM.setRotate(-5,.1,0,0);
@@ -103,8 +132,14 @@ class Flamingo {
         modelMatrix.multiply(rotateM);
         modelMatrix.multiply(scaleM);
         rgba=[.02,.02,.02,1];
-        drawCube(modelMatrix);
-
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
         //beak (black) (6)
         translateM.setTranslate(0,.40,-.25);
         rotateM.setRotate(-5,.1,0,0);
@@ -116,8 +151,14 @@ class Flamingo {
         modelMatrix.multiply(rotateM);
         modelMatrix.multiply(scaleM);
         rgba=[.02,.02,.02,1];
-        drawCube(modelMatrix);
-
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
 
         //neck (7)
         translateM.setTranslate(0,.2,.025);
@@ -130,8 +171,14 @@ class Flamingo {
         modelMatrix.multiply(rotateM);
         modelMatrix.multiply(scaleM);
         rgba=[.9,.1,.7,1];
-        drawCube(modelMatrix);
-
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
         //body (8)
         translateM.setTranslate(0,-.06,.2);
         scaleM.setScale(.165,.18,.26);
@@ -142,8 +189,14 @@ class Flamingo {
         //modelMatrix.multiply(rotateM);
         modelMatrix.multiply(scaleM);
         rgba=[.8,.1,.6,1];
-        drawCube(modelMatrix);
-
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
 
         if(wings==10){
         moveUp=0;
@@ -162,8 +215,14 @@ class Flamingo {
         modelMatrix.multiply(rotateM);
         modelMatrix.multiply(scaleM);
         rgba=[.8,.1,.5,1];
-        drawCube(modelMatrix);
-
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
         //right wing bottom (10)
         translateM.setTranslate((.2+moveUp/2),(-.04+moveUp),.2);
         rotateM.setRotate(-(5+wings/2),0,0,-.15);
@@ -175,8 +234,14 @@ class Flamingo {
         modelMatrix.multiply(rotateM);
         modelMatrix.multiply(scaleM);
         rgba=[.8,.1,.5,1];
-        drawCube(modelMatrix);
-
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
         if(g_lLeg==15){
         moveBackL=0;
         }
@@ -202,8 +267,14 @@ class Flamingo {
         modelMatrix.multiply(rotateM);
         modelMatrix.multiply(scaleM);
         rgba=[.6,.3,.6,1];
-        drawCube(modelMatrix);
-
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
         
         //right joint (12)
         var rLegMatrix=new Matrix4();
@@ -244,8 +315,14 @@ class Flamingo {
         modelMatrix.multiply(rotateM);
         modelMatrix.multiply(scaleM);
         rgba=[.6,.3,.6,1];
-        drawCube(modelMatrix);
-
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
 
         let footr=new Matrix4();
         footr.set(modelMatrix);
@@ -272,8 +349,14 @@ class Flamingo {
         modelMatrix.multiply(rotateM);
         modelMatrix.multiply(scaleM);
         rgba=[.6,.3,.6,1];
-        drawCube(modelMatrix);
-
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
 
         //left joint (15)
         var lLegMatrix=new Matrix4();
@@ -311,14 +394,14 @@ class Flamingo {
         modelMatrix.multiply(rotateM);
         modelMatrix.multiply(scaleM);
         rgba=[.6,.3,.6,1];
-        drawCube(modelMatrix);
-
-        let footl=new Matrix4();
-        footl.set(modelMatrix);
-        footl.translate(-0,-.7,-11);
-        footl.scale(1,.1,3.1);
-        rgba=[.6,.3,.6,1];
-        footl.multiply(moveMatrix);
-        //drawCube(footl);
+        if(g_normalOn==true){
+            gl.uniform1i(u_whichTexture,-4);
+            drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+          }
+          else{
+            gl.uniform1i(u_whichTexture,-2);
+            drawCube(modelMatrix);
+        }
+        
     }
 }
