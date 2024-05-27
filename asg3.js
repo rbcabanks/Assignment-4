@@ -8,7 +8,7 @@ var VSHADER_SOURCE =
   'attribute vec3 a_Normal;\n'+
   'varying vec4 v_VertPos;\n'+
   'uniform mat4 u_ModelMatrix;\n' +
-  'uniform mat4 u_NormalMatrix;\n' +
+  //'uniform mat4 u_NormalMatrix;\n' +
   'uniform mat4 u_GlobalRotateMatrix;\n' +
   'uniform mat4 u_ViewMatrix;\n' +
   'uniform mat4 u_ProjectionMatrix;\n' +
@@ -32,7 +32,11 @@ var FSHADER_SOURCE = `
   uniform sampler2D u_Sampler1;
   uniform int u_whichTexture;
   uniform vec3 u_color;
+  uniform vec3 u_Color2;
   uniform vec3 u_lightPos;
+  uniform vec3 u_lightPos2;
+  //uniform vec3 u_lightDirection;
+  uniform int lightType;
   uniform vec3 u_cameraPos;
   varying vec4 v_VertPos;
   uniform bool u_lightOn;
@@ -64,36 +68,56 @@ var FSHADER_SOURCE = `
       else{
         gl_FragColor=vec4(1,1,1,1);
       }
+
+      if(lightType==1){
+        vec3 lightVector= u_lightPos-vec3(v_VertPos);
+        float r =length(lightVector);
+
+        vec3 L = normalize(lightVector);
+        vec3 N = normalize(v_Normal);
+        float nDot = max(dot(N,L),0.0);
       
-      vec3 lightVector= u_lightPos-vec3(v_VertPos);
-      float r =length(lightVector);
+        //reflection
+        vec3 R = reflect(-L,N);
+        vec3 E= normalize(u_cameraPos-vec3(v_VertPos));
 
-      vec3 L = normalize(lightVector);
-      vec3 N = normalize(v_Normal);
-      float nDot = max(dot(N,L),0.0);
-     
-      //reflection
-      vec3 R = reflect(-L,N);
-      vec3 E= normalize(u_cameraPos-vec3(v_VertPos));
+        //specular
+        float specular= pow(max(dot(E,R),.7),.1)*.10; // shininess is the .4 
 
-      //specular
-      float specular= pow(max(dot(E,R),.7),.1)*.10; // shininess is the .4 
+        //diffuse
+        vec3 diffuse = vec3(gl_FragColor)*nDot*.73*u_color;
+        //vec3 diffuse = u_color*nDot*.3;
 
-      //diffuse
-      vec3 diffuse = vec3(gl_FragColor)*nDot*.73*u_color;
-      //vec3 diffuse = u_color*nDot*.3;
+        //ambient
+        vec3 ambient = vec3(gl_FragColor)*.5;
 
-      //ambient
-      vec3 ambient = vec3(gl_FragColor)*.5;
-
-      if(u_lightOn){
-        if(u_whichTexture==0){
-          gl_FragColor=vec4(specular+diffuse+ambient,1.0);
+        if(u_lightOn){
+          if(u_whichTexture==0){
+            gl_FragColor=vec4(specular+diffuse+ambient,1.0);
+          }
+          else{
+            gl_FragColor=vec4(diffuse+ambient,1.0);
+          }
+          //gl_FragColor=vec4(specular+diffuse+ambient,1.0);
         }
-        else{
+      }
+      else if(lightType==2){
+        vec3 lightVector= u_lightPos-vec3(v_VertPos);
+        float r= length(lightVector);
+        
+        vec3 L = normalize(lightVector);
+        vec3 N = normalize(v_Normal);
+        float nDot = max(dot(N,L),0.0);
+
+        //diffuse
+        vec3 diffuse = vec3(gl_FragColor)*nDot*u_color;
+
+        //ambient
+        vec3 ambient = vec3(gl_FragColor)*.3;
+
+        if(u_lightOn){
           gl_FragColor=vec4(diffuse+ambient,1.0);
         }
-        //gl_FragColor=vec4(specular+diffuse+ambient,1.0);
       }
   }`; 
   
@@ -149,7 +173,10 @@ let u_PickedFace=0;
 let g_normalOn=false;
 let a_Normal;
 
-let moveXx=12;
+let u_lightDirection;
+let u_Color2;
+
+let moveXx=0;
 let moveYy=2;
 let moveZz=0;
 
@@ -228,6 +255,17 @@ function connectVariablesToGLSL() {
     console.log('Failed to get the storage location of u_lightPos');
     return;
   }
+  /*u_lightPos2 = gl.getUniformLocation(gl.program, 'u_lightPos2');
+  if (!u_lightPos2) {
+    console.log('Failed to get the storage location of u_lightPos2');
+    return;
+  }
+  u_Color2 = gl.getUniformLocation(gl.program, 'u_Color2');
+  if (!u_Color2) {
+    console.log('Failed to get the storage location of u_Color2');
+    return;
+  }*/
+
   u_lightOn = gl.getUniformLocation(gl.program, 'u_lightOn');
   if (!u_lightOn) {
     console.log('Failed to get the storage location of u_lightOn');
@@ -254,6 +292,11 @@ function connectVariablesToGLSL() {
     console.log('Failed to get the storage location of u_whichTexture');
     return;
   }
+  lightType = gl.getUniformLocation(gl.program, 'lightType');
+  if (!lightType) {
+    console.log('Failed to get the storage location of lightType');
+    return;
+  }
 
   u_Size = gl.getUniformLocation(gl.program, 'u_Size');
   if (!u_Size) {
@@ -265,16 +308,12 @@ function connectVariablesToGLSL() {
     console.log('Failed to get the storage location of u_color');
     return;
   }
+
   u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
   if (!u_ModelMatrix) {
     console.log('Failed to get the storage location of u_ModelMatrix');
     return;
   }
-  /*u_NormalMatrix = gl.getUniformLocation(gl.program, 'u_NormalMatrix');
-  if (!u_NormalMatrix) {
-    console.log('Failed to get the storage location of u_NormalMatrix');
-    return;
-  }*/
   u_GlobalRotateMatrix = gl.getUniformLocation(gl.program, 'u_GlobalRotateMatrix');
   if (!u_GlobalRotateMatrix) {
     console.log('Failed to get the storage location of u_GlobalRotateMatrix');
@@ -303,7 +342,8 @@ function updateAnimationAngles(){
   }
   //moveXx=moveXx-Math.sin(g_seconds);
   //moveXx=moveXx-(Math.sin(g_seconds)/10);
-  moveXx=3*Math.cos(g_seconds);
+  
+  moveXx=moveXx-.9*Math.cos(g_seconds);
 }
 var g_map=[
   [1,0,0,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -440,43 +480,45 @@ function renderScene(){
     drawCubeUV(modelMatrix,uv);
   }
 
-  //gl.uniform1i(u_whichTexture,0);
-  //drawCubeUV(modelMatrix,uv);
-
-  //light
+  //directional spot light
+  gl.uniform1i(lightType,1);
   gl.uniform3f(u_lightPos,moveXx,moveYy,moveZz);
   gl.uniform3f(u_cameraPos,g_camera.x,g_camera.y,g_camera.z);
   gl.uniform1i(u_lightOn,LightON);
- // gl.uniform1i(u_whichTexture,-2);
-  //gl.uniform4f(u_FragColor,1.0,0,0,1.0);
-
-  //gl.uniform3f(u_color,1,0,0);
   gl.uniform3f(u_color,colorChangeR,colorChangeG,colorChangeB);
-
   rgba=[2,2,0,1];
   var light=new Matrix4();
   var translateLight=new Matrix4();
-  var translateLight2=new Matrix4();
-  var scaleLight=new Matrix4();
   translateLight.setTranslate(moveXx,moveYy,moveZz);
   light.multiply(translateLight);
   light.scale(.1,.1,.1);
-
+  gl.uniform1i(u_whichTexture,-2);
   drawCube(light);
 
+/*
+  //point light
+  var light2=new Matrix4();
+  gl.uniform1i(lightType,2);
+  gl.uniform3f(u_lightPos,5,2,10);
+  gl.uniform3f(u_cameraPos,g_camera.x,g_camera.y,g_camera.z);
+  gl.uniform1i(u_lightOn,LightON);
+  gl.uniform3f(u_color,colorChangeR,colorChangeG,colorChangeB);
+  //gl.uniform3f(u_lightDirection,1,0,1);
 
+  rgba=[1,.1,0,1];
+  translateLight=new Matrix4();
+  translateLight.setTranslate(5,2,10);
+  light2.multiply(translateLight);
+  light2.scale(.1,.1,.1);
+  gl.uniform1i(u_whichTexture,-2);
+  drawCube(light2);
+*/
   //sphere
   var Sph= new Sphere;
   Sph.render();
 
   drawMap(g_map);
   for(let x=0;x<floatingCubes.length;x++){
-
-            //x= 0-15
-            //y= 0-15
-            //each floating cube is at (x+3, (float/20) , y-1.5) location;
-
-            
     translateM=new Matrix4();
     translateM.setTranslate(0,(float/20),0)
     floatingCubes[x].multiply(translateM);
@@ -496,16 +538,15 @@ function renderScene(){
       drawCube3DUVNormal(floatingCubes[x],uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
     }
     else{
-      gl.uniform3f(u_lightPos,moveXx,moveYy,moveZz);
-      gl.uniform3f(u_cameraPos,g_camera.x,g_camera.y,g_camera.z);
-      gl.uniform1i(u_lightOn,LightON);
+      //gl.uniform3f(u_lightPos,moveXx,moveYy,moveZz);
+      //gl.uniform3f(u_cameraPos,g_camera.x,g_camera.y,g_camera.z);
+      //gl.uniform1i(u_lightOn,LightON);
       gl.uniform1i(u_whichTexture,-2);
       rgba=[1,2,2,1];
       drawCube(floatingCubes[x]);
       //drawCube3DUVNormal(floatingCubes[x],uv,[0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0]);
     }
   }
-
 
   var duration = performance.now()-startTime;
   sendTextToHTML(("ms:" + Math.floor(duration)+" fps:"+ Math.floor(10000/duration)/10), "numdot")

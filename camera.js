@@ -28,9 +28,9 @@ class Camera {
       this.up.elements[0],this.up.elements[1],this.up.elements[2]); //eye, at, up
   }
   moveForward(){
-    //console.log(this.eye.elements);
+    ////console.log(this.eye.elements);
     //moveX=moveX-1;
-    //console.log(moveX);
+    ////console.log(moveX);
     
     var f = new Vector3(0.0,0.0,0.0);            
     f.set(this.at);                 
@@ -40,29 +40,29 @@ class Camera {
     this.eye.add(f);                
     this.at.add(f);                 
     this.setLook();
-    console.log("forward at",this.at.elements);
-    console.log("forward eye",this.eye.elements);
+    //console.log("forward at",this.at.elements);
+    //console.log("forward eye",this.eye.elements);
     //this.resetPerspective();
 
     /*var w = new Vector3(0.0,0.0,0.0);
-    console.log("w ",w.elements);
+    //console.log("w ",w.elements);
    
-    console.log("at ",this.at.elements);
+    //console.log("at ",this.at.elements);
     w.set(this.at);
     //this.at.set(w);
-    console.log("eye ",this.eye.elements);
-    console.log("f set ",w.elements);
+    //console.log("eye ",this.eye.elements);
+    //console.log("f set ",w.elements);
     w.sub(this.eye);
-    console.log("f sub ",w.elements);
+    //console.log("f sub ",w.elements);
     w.normalize();
-    console.log("f norm ",w.elements);
+    //console.log("f norm ",w.elements);
     w.mul(this.speed);
-    console.log("f mul ",w.elements);
+    //console.log("f mul ",w.elements);
     this.eye.add(w);
-    console.log("eye  add",this.eye.elements);
+    //console.log("eye  add",this.eye.elements);
     this.at.add(w);
-    console.log("at add",this.at.elements);
-    console.log("moveForward translate ");
+    //console.log("at add",this.at.elements);
+    //console.log("moveForward translate ");
     */
   }
   moveBackward(){
@@ -72,13 +72,13 @@ class Camera {
     b.sub(this.at);
     b.normalize();
     b.mul(this.speed);
-    console.log(this.at.elements, this.eye.elements);
+    //console.log(this.at.elements, this.eye.elements);
     this.at.add(b);
     this.eye.add(b);
     this.setLook();
 
     //moveX=moveX+1;
-    //console.log(moveX);
+    ////console.log(moveX);
 
     /*var w = new Vector3(0.0,0.0,0.0);
     w.set(this.eye);
@@ -99,7 +99,7 @@ class Camera {
     var s = Vector3.cross(this.up, w);
     this.at.add(s);
     this.eye.add(s);
-    console.log("left",this.at.elements, this.eye.elements);
+    //console.log("left",this.at.elements, this.eye.elements);
     this.setLook();
     //gl.uniformMatrix4fv(u_ViewMatrix,false,this.viewMatrix.elements);
  }
@@ -112,13 +112,13 @@ class Camera {
     var s = Vector3.cross(this.up, r);
     this.at.add(s);
     this.eye.add(s);
-    console.log("right",this.at.elements, this.eye.elements);
+    //console.log("right",this.at.elements, this.eye.elements);
 
     this.setLook();
     //gl.uniformMatrix4fv(u_ViewMatrix,false,this.viewMatrix.elements);
   }
   panLeft(){
-    console.log("s1 at left",this.at.elements);
+    //console.log("s1 at left",this.at.elements);
     var left = new Vector3();
     left.set(this.at);
     left.sub(this.eye);
@@ -126,13 +126,13 @@ class Camera {
 		rotationMatrixL.setIdentity();
 		rotationMatrixL.setRotate(3, this.up.elements[0], this.up.elements[1], this.up.elements[2]);
 		let s = rotationMatrixL.multiplyVector3(left);
-    console.log("s left",s.elements);
+    //console.log("s left",s.elements);
 		this.at = s.add(this.eye);
-    console.log("s at left",this.at.elements);
-    console.log("eye at left",this.eye.elements);
+    //console.log("s at left",this.at.elements);
+    //console.log("eye at left",this.eye.elements);
   }
   panRight(){
-    console.log("k1 at left",this.at.elements);
+    //console.log("k1 at left",this.at.elements);
     var right = new Vector3();
     right.set(this.at);
     right.sub(this.eye);
@@ -140,10 +140,10 @@ class Camera {
 		rotationMatrixR.setIdentity();
 		rotationMatrixR.setRotate(-3, this.up.elements[0], this.up.elements[1], this.up.elements[2]);
 		let k = rotationMatrixR.multiplyVector3(right);
-    console.log("k right",k.elements);
+    //console.log("k right",k.elements);
 		this.at = k.add(this.eye);
-    console.log("k at left",this.at.elements);
-    console.log("eye at left",this.eye.elements);
+    //console.log("k at left",this.at.elements);
+    //console.log("eye at left",this.eye.elements);
 
 
   }
@@ -164,7 +164,7 @@ class Camera {
 }/*
 function keydown(ev) {
   if(ev.keyCode == 87) { // The w key was pressed
-    //console.log("here");
+    ////console.log("here");
     moveForward();
   }else
   if (ev.keyCode == 84) { // The s key was pressed
