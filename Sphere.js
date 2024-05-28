@@ -110,7 +110,7 @@ class Sphere{
                 vv=vv.concat(p4);
 */
                 //gl.uniform4f(u_FragColor,1,0,0,1);
-                l=v;l=v;
+                l=v;
                 drawTriangle3DUVNormal(v,uv,l);
             }
         }
