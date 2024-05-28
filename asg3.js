@@ -358,6 +358,8 @@ function updateAnimationAngles(){
 }
 
   
+let normalssback=[0.0,0.0,-1.0, 0.0,0.0,-1.0, 0.0,0.0,-1.0, 0.0,0.0,-1.0, 0.0,0.0,-1.0, 0.0,0.0,-1.0];
+
 let normalsback=[0.0,0.0,-1.0, 0.0,0.0,-1.0, 0.0,0.0,-1.0, 0.0,0.0,-1.0, 0.0,0.0,-1.0, 0.0,0.0,-1.0];
 let normalsup=[0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   ];
 let normalsright=[1.0, 0.0, 0.0,   1.0, 0.0, 0.0,1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0];
@@ -470,10 +472,10 @@ function renderScene(){
   gl.activeTexture(gl.TEXTURE1);
 
   
-  if(g_normalOn!=true){
-    gl.uniform1i(u_whichTexture,-3);
-    drawCubeUV(modelMatrix1,uv);
-  }
+
+  gl.uniform1i(u_whichTexture,-3);
+  drawCubeUV(modelMatrix1,uv);
+  
   
 
 
@@ -490,8 +492,12 @@ function renderScene(){
   translateM.setTranslate(0,.95,0);
   modelMatrix.multiply(translateM);
 
+    
   if(g_normalOn==true){
     gl.uniform1i(u_whichTexture,-4);
+    //drawCube3DUVNormal(modelMatrix,uv,normalssup,normalssback,normalssleft,normalssright,normalssface,normalssdown);
+    //drawCube3DUVNormal(modelMatrix,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+
     drawCube3DUVNormal(modelMatrix,uv,normalsup,normalsback,normalsleft,normalsright,normalsface,normalsdown);
   }//face = left
   else{
