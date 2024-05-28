@@ -14,7 +14,7 @@ var VSHADER_SOURCE =
   'uniform mat4 u_ProjectionMatrix;\n' +
   'uniform float u_Size;\n' +
   'void main() {\n' +
-  '  gl_Position = u_ProjectionMatrix*u_ViewMatrix*  u_GlobalRotateMatrix* u_ModelMatrix * a_Position;\n' +
+  '  gl_Position = u_ProjectionMatrix*u_ViewMatrix*u_GlobalRotateMatrix* u_ModelMatrix * a_Position;\n' +
   '  gl_PointSize = u_Size;\n' +
   '  v_UV = a_UV; \n'+
   //'  v_Normal=normalize(vec3(u_NormalMatrix*vec4(a_Normal,1))); \n'+
