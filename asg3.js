@@ -472,7 +472,7 @@ function renderScene(){
 
   
   if(g_normalOn==true){
-    gl.uniform1i(u_whichTexture,0);
+    gl.uniform1i(u_whichTexture,-3);
     drawCubeUV(modelMatrix1,uv);
     //drawCube3DUVNormal(modelMatrix1,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
   }
@@ -486,7 +486,7 @@ function renderScene(){
   drawCubeUV(modelMatrix1,uv);*/
 
   let Jerry= new Flamingo();
-  Jerry.x=-1;
+  Jerry.x=4;
   Jerry.z=5;
   Jerry.render();
 
@@ -511,7 +511,9 @@ function renderScene(){
 
   if(lighttype==1){
      //directional spot light
-    let spotLight=[-2,0.5,1];
+    //let spotLight=[-2,0.5,1];
+    let spotLight=[-2,5,-4];
+
     gl.uniform1i(lightType,1);
     gl.uniform3f(u_lightPos,spotLight[0],spotLight[1],spotLight[2]);
     gl.uniform3f(u_cameraPos,g_camera.x,g_camera.y,g_camera.z);

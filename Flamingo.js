@@ -55,9 +55,9 @@ class Flamingo {
             drawCube(modelMatrix);
         }
 
-        translateM.setTranslate(1,.3,-5.5);
+        translateM.setTranslate(-4,.3,-5);
         //rotateM.setRotate(5,-.1,0,0);
-        scaleM.setScale(1.1,.2,.2);
+        scaleM.setScale(1.1,.2,.1);
         modelMatrix.multiply(translateM);
         modelMatrix.multiply(moveMatrix);
 

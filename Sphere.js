@@ -11,17 +11,16 @@ class Sphere{
         var r = new Matrix4();
         var t= new Matrix4();
 
-        k.setTranslate(4,1,5);
+        k.setTranslate(0,1,0);
         //r.setRotate(0,0,.4,0);
         //t.transpose();
 
-        r.setRotate(80,0,1,0);
+        //r.setRotate(80,0,1,0);
         //r.setRotate(70,-1,0,0);
-
-        
-        this.matrix.multiply(k);
         //this.matrix.multiply(t);
-        this.matrix.multiply(r);
+        //this.matrix.multiply(r);
+        this.matrix.multiply(k);
+
         
         var rgba = this.color;
         gl.uniform1i(u_whichTexture,this.textureNum);
