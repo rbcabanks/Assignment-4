@@ -82,22 +82,23 @@ var FSHADER_SOURCE = `
           vec3 E= normalize(u_cameraPos-vec3(v_VertPos));
 
           //specular
-          float specular= pow(max(dot(E,R),.7),.1)*.10; // shininess is the .4 
+          float specular= pow(max(dot(E,R),.9),.05)*.1; // shininess is the .4 
 
           //diffuse
-          vec3 diffuse = vec3(gl_FragColor)*nDot*.7*u_color;
-          //vec3 diffuse = u_color*nDot*.3;
+          vec3 diffuse = vec3(gl_FragColor)*nDot*.9*u_color;
 
           //ambient
-          vec3 ambient = vec3(gl_FragColor)*.5;
+          vec3 ambient = vec3(gl_FragColor)*.2;
 
           if(u_lightOn){
-            if(u_whichTexture==0){
-              gl_FragColor=vec4(specular+diffuse+ambient,1.0);
-            }
-            else{
-              gl_FragColor=vec4(diffuse+ambient,1.0);
-            }
+
+            gl_FragColor=vec4(specular+diffuse+ambient,1.0);
+            //if(u_whichTexture==0){
+              //gl_FragColor=vec4(specular+diffuse+ambient,1.0);
+            //}
+            //else{
+            //  ;gl_FragColor=vec4(diffuse+ambient,1.0)
+            //}
           }
         }
         else if(lightType==2){
@@ -176,8 +177,8 @@ let lighttype=1;
 let u_Color2;
 
 let moveXx=0;
-let moveYy=2;
-let moveZz=0;
+let moveYy=0;
+let moveZz=4;
 
 let colorChangeR=1;
 let colorChangeB=1;
@@ -353,7 +354,7 @@ function updateAnimationAngles(){
   //moveXx=moveXx-(Math.sin(g_seconds)/10);
   
   
-    moveXx=moveXx-.9*Math.cos(g_seconds);
+    moveXx=moveXx-.1*Math.cos(g_seconds);
   
 }
 
@@ -470,8 +471,16 @@ function renderScene(){
   gl.activeTexture(gl.TEXTURE1);
 
   
-  gl.uniform1i(u_whichTexture,-3);
-  drawCubeUV(modelMatrix1,uv);
+  if(g_normalOn==true){
+    gl.uniform1i(u_whichTexture,0);
+    drawCubeUV(modelMatrix1,uv);
+    //drawCube3DUVNormal(modelMatrix1,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
+  }
+  else{
+    gl.uniform1i(u_whichTexture,-3);
+    drawCubeUV(modelMatrix1,uv);
+
+  }
   
   /*gl.uniform1i(u_whichTexture,-3);
   drawCubeUV(modelMatrix1,uv);*/
@@ -502,15 +511,17 @@ function renderScene(){
 
   if(lighttype==1){
      //directional spot light
+    let spotLight=[-2,0.5,1];
     gl.uniform1i(lightType,1);
-    gl.uniform3f(u_lightPos,moveXx,moveYy,moveZz);
+    gl.uniform3f(u_lightPos,spotLight[0],spotLight[1],spotLight[2]);
     gl.uniform3f(u_cameraPos,g_camera.x,g_camera.y,g_camera.z);
     gl.uniform1i(u_lightOn,LightON);
     gl.uniform3f(u_color,colorChangeR,colorChangeG,colorChangeB);
     rgba=[2,2,0,1];
     var light=new Matrix4();
     var translateLight=new Matrix4();
-    translateLight.setTranslate(moveXx,moveYy,moveZz);
+    //translateLight.setTranslate(moveXx,moveYy,moveZz);
+    translateLight.setTranslate(spotLight[0],spotLight[1],spotLight[2]);
     light.multiply(translateLight);
     light.scale(.1,.1,.1);
     gl.uniform1i(u_whichTexture,-2);
@@ -521,15 +532,13 @@ function renderScene(){
     let pointLight=[0,0,4];
     var light2=new Matrix4();
     gl.uniform1i(lightType,2);
-    gl.uniform3f(u_lightPos2,pointLight[0],pointLight[1],pointLight[2]);
+    gl.uniform3f(u_lightPos2,moveXx,moveYy,moveZz);
     gl.uniform1i(u_lightOn,LightON);
-    gl.uniform3f(u_color2,0,1,1);
-    //gl.uniform3f(u_lightDirection,pointLight[0],pointLight[1],pointLight[2]);
-    //gl.uniform3f(u_lightDirection,pointLight[0],pointLight[1],pointLight[2]);
+    gl.uniform3f(u_color2,colorChangeR,colorChangeG,colorChangeB);
 
     //rgba=[1,.1,0,0];
     translateLight=new Matrix4();
-    translateLight.setTranslate(pointLight[0],pointLight[1],pointLight[2]);
+    translateLight.setTranslate(moveXx,moveYy,moveZz);
     light2.multiply(translateLight);
     light2.scale(.05,.05,.05);
     gl.uniform1i(u_whichTexture,-2);

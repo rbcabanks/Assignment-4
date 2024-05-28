@@ -9,14 +9,20 @@ class Sphere{
     render(){
         var k= new Matrix4();
         var r = new Matrix4();
+        var t= new Matrix4();
 
         k.setTranslate(4,1,5);
         //r.setRotate(0,0,.4,0);
-        //r.setRotate(60,.7,0,.1);
+        //t.transpose();
+
+        r.setRotate(80,0,1,0);
+        //r.setRotate(70,-1,0,0);
+
         
         this.matrix.multiply(k);
-        //this.matrix.multiply(r);
-
+        //this.matrix.multiply(t);
+        this.matrix.multiply(r);
+        
         var rgba = this.color;
         gl.uniform1i(u_whichTexture,this.textureNum);
         gl.uniform4f(u_FragColor,rgba[0],rgba[1],rgba[2],rgba[3]);
