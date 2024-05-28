@@ -35,7 +35,6 @@ var FSHADER_SOURCE = `
   uniform vec3 u_color2;
   uniform vec3 u_lightPos;
   uniform vec3 u_lightPos2;
-  uniform vec3 u_lightDirection;
   uniform int lightType;
   uniform vec3 u_cameraPos;
   varying vec4 v_VertPos;
@@ -82,29 +81,24 @@ var FSHADER_SOURCE = `
           vec3 E= normalize(u_cameraPos-vec3(v_VertPos));
 
           //specular
-          float specular= pow(max(dot(E,R),.9),.05)*.1; // shininess is the .4 
+          float specular= pow(max(dot(E,R),0.0),.55)*.4; // shininess is the .4 
 
           //diffuse
-          vec3 diffuse = vec3(gl_FragColor)*nDot*.9*u_color;
+          
+          vec3 diffuse = vec3(u_color)*vec3(gl_FragColor)*nDot*.9;
 
           //ambient
           vec3 ambient = vec3(gl_FragColor)*.2;
 
-          if(u_lightOn){
-
+          if(u_whichTexture==0){
             gl_FragColor=vec4(specular+diffuse+ambient,1.0);
-            //if(u_whichTexture==0){
-              //gl_FragColor=vec4(specular+diffuse+ambient,1.0);
-            //}
-            //else{
-            //  ;gl_FragColor=vec4(diffuse+ambient,1.0)
-            //}
+          }
+          else{
+            gl_FragColor=vec4(diffuse+ambient,1.0);
           }
         }
         else if(lightType==2){
-          vec3 lightVector= u_lightDirection;
-          lightVector=u_lightPos2-vec3(v_VertPos);
-
+          vec3 lightVector= u_lightPos2-vec3(v_VertPos);
           float r =length(lightVector);
         
           vec3 L = normalize(lightVector);
@@ -180,6 +174,10 @@ let moveXx=0;
 let moveYy=0;
 let moveZz=4;
 
+let movesXx=-3;
+let movesYy=0;
+let movesZz=2;
+
 let colorChangeR=1;
 let colorChangeB=1;
 let colorChangeG=1;
@@ -196,9 +194,15 @@ function addActionsForUI() { // used this resource "https://www.w3schools.com/ho
  document.getElementById('point').onclick = function () {lighttype=2;};
  document.getElementById('spot').onclick = function () {lighttype=1;};
 
- document.getElementById('mX').addEventListener('mousemove', function () {moveXx=this.value; renderScene();}); 
+ document.getElementById('mX').addEventListener('mousemove', function () {moveXx=-this.value; renderScene();}); 
  document.getElementById('mY').addEventListener('mousemove', function () {moveYy=this.value; renderScene();}); 
  document.getElementById('mZ').addEventListener('mousemove', function () {moveZz=this.value; renderScene();}); 
+
+
+ document.getElementById('msX').addEventListener('mousemove', function () {movesXx=-this.value; renderScene();}); 
+ document.getElementById('msY').addEventListener('mousemove', function () {movesYy=this.value; renderScene();}); 
+ document.getElementById('msZ').addEventListener('mousemove', function () {movesZz=this.value; renderScene();}); 
+
 
  document.getElementById('colorLightR').addEventListener('mousemove', function () {colorChangeR=this.value/10; renderScene();}); 
  document.getElementById('colorLightB').addEventListener('mousemove', function () {colorChangeB=this.value/10; renderScene();}); 
@@ -326,11 +330,6 @@ function connectVariablesToGLSL() {
   u_ProjectionMatrix = gl.getUniformLocation(gl.program, 'u_ProjectionMatrix');
   if (!u_ProjectionMatrix) {
     console.log('Failed to get the storage location of u_ProjectionMatrix');
-    return;
-  }
-  u_lightDirection = gl.getUniformLocation(gl.program, 'u_lightDirection');
-  if (!u_lightDirection) {
-    console.log('Failed to get the storage location of u_lightDirection');
     return;
   }
   u_lightPos2 = gl.getUniformLocation(gl.program, 'u_lightPos2');
@@ -471,19 +470,12 @@ function renderScene(){
   gl.activeTexture(gl.TEXTURE1);
 
   
-  if(g_normalOn==true){
+  if(g_normalOn!=true){
     gl.uniform1i(u_whichTexture,-3);
     drawCubeUV(modelMatrix1,uv);
-    //drawCube3DUVNormal(modelMatrix1,uv,normalsback,normalsup,normalsright,normalsleft,normalsface,normalsdown);
-  }
-  else{
-    gl.uniform1i(u_whichTexture,-3);
-    drawCubeUV(modelMatrix1,uv);
-
   }
   
-  /*gl.uniform1i(u_whichTexture,-3);
-  drawCubeUV(modelMatrix1,uv);*/
+
 
   let Jerry= new Flamingo();
   Jerry.x=4;
@@ -511,19 +503,16 @@ function renderScene(){
 
   if(lighttype==1){
      //directional spot light
-    //let spotLight=[-2,0.5,1];
-    let spotLight=[-2,5,-4];
-
+    //let spotLight=[-2,5,1];
     gl.uniform1i(lightType,1);
-    gl.uniform3f(u_lightPos,spotLight[0],spotLight[1],spotLight[2]);
     gl.uniform3f(u_cameraPos,g_camera.x,g_camera.y,g_camera.z);
+    gl.uniform3f(u_lightPos,movesXx,movesYy,movesZz);
     gl.uniform1i(u_lightOn,LightON);
     gl.uniform3f(u_color,colorChangeR,colorChangeG,colorChangeB);
     rgba=[2,2,0,1];
     var light=new Matrix4();
     var translateLight=new Matrix4();
-    //translateLight.setTranslate(moveXx,moveYy,moveZz);
-    translateLight.setTranslate(spotLight[0],spotLight[1],spotLight[2]);
+    translateLight.setTranslate(movesXx,movesYy,movesZz);
     light.multiply(translateLight);
     light.scale(.1,.1,.1);
     gl.uniform1i(u_whichTexture,-2);
@@ -534,6 +523,7 @@ function renderScene(){
     let pointLight=[0,0,4];
     var light2=new Matrix4();
     gl.uniform1i(lightType,2);
+    gl.uniform3f(u_cameraPos,g_camera.x,g_camera.y,g_camera.z);
     gl.uniform3f(u_lightPos2,moveXx,moveYy,moveZz);
     gl.uniform1i(u_lightOn,LightON);
     gl.uniform3f(u_color2,colorChangeR,colorChangeG,colorChangeB);
